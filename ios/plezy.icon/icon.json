@@ -22,10 +22,10 @@
               "value": "none"
             }
           ],
-          "glass": true,
+          "glass": false,
           "hidden": false,
-          "image-name": "plezy-cropped.svg",
-          "name": "plezy-cropped",
+          "image-name": "ftv-fish.png",
+          "name": "ftv-fish",
           "position": {
             "scale": 2,
             "translation-in-points": [
@@ -37,7 +37,7 @@
       ],
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.5
+        "opacity": 0.0
       },
       "specular": true,
       "translucency": {
