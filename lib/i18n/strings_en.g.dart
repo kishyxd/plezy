@@ -105,7 +105,7 @@ class Translations$app$en {
 	// Translations
 
 	/// en: 'Plezy'
-	String get title => 'FTV Media';
+	String get title => 'FTV';
 }
 
 // Path: appIcon

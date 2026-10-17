@@ -99,7 +99,7 @@ class _Translations$app$pl extends Translations$app$en {
 	final TranslationsPl _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'FTV Media';
+	@override String get title => 'FTV';
 }
 
 // Path: auth
