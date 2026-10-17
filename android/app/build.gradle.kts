@@ -246,7 +246,11 @@ android {
 
   defaultConfig {
     applicationId = "com.kxvn.ftv"
-    minSdk = 25 // Fire OS 6.x (API 25); :libmpv shares the same floor
+    // FTV build: widened floor for Fire OS 5.x sticks (API 21/22).
+    // minSdk 25 blocked install on 32-bit Fire Sticks. libmpv declared-requirement
+    // stays 25, but PackageManager only enforces the manifest value — playback
+    // on pre-25 devices is best-effort, install-anywhere is the goal.
+    minSdk = 21
     targetSdk = flutter.targetSdkVersion
     versionCode = flutter.versionCode
     versionName = flutter.versionName
