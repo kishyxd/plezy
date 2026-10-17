@@ -1,0 +1,42 @@
+name: Upload-to-TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      ipa_url:
+        description: "HTTPS URL of the signed .ipa"
+        required: true
+
+jobs:
+  upload:
+    runs-on: macos-14
+    timeout-minutes: 45
+    steps:
+      - name: Fetch signed IPA
+        run: |
+          curl -sL --retry 3 -o ftv.ipa "${{ inputs.ipa_url }}"
+          ls -la ftv.ipa
+          file ftv.ipa || true
+          unzip -l ftv.ipa | head -5
+
+      - name: Validate Info.plist inside IPA
+        run: |
+          mkdir -p probe && cd probe
+          unzip -qo ../ftv.ipa Payload/*/Info.plist
+          PLIST=$(find . -name Info.plist | head -1)
+          plutil -extract CFBundleIdentifier raw "$PLIST" || true
+          plutil -extract CFBundleShortVersionString raw "$PLIST" || true
+          plutil -extract CFBundleDisplayName raw "$PLIST" || true
+
+      - name: Probe App Store Connect and upload
+        run: |
+          xcrun altool --upload-package ftv.ipa \
+            --apple-id "${{ secrets.APPLE_ID }}" \
+            --password "${{ secrets.APPLE_APP_SPEC_PW }}" \
+            --team-id "6VS7BF6R33" \
+            --type ios 2>&1 | tee upload.log
+          if grep -q "ERROR\|error:" upload.log; then
+            echo "::warning::altool reported errors - see log"
+            exit 1
+          fi
+          echo "UPLOAD-DONE"
