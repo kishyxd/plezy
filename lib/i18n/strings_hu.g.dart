@@ -3039,7 +3039,7 @@ class _Translations$services$libraryFilter$hu extends Translations$services$libr
 extension on TranslationsHu {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'app.title' => 'Plezy',
+			'app.title' => 'FTV',
 			'auth.signInWithPlex' => 'Bejelentkezés Plexszel',
 			'auth.showQRCode' => 'QR-kód megjelenítése',
 			'auth.authenticate' => 'Hitelesítés',

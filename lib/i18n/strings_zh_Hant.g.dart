@@ -3029,7 +3029,7 @@ class _Translations$services$libraryFilter$zh_Hant extends Translations$services
 extension on TranslationsZhHant {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'app.title' => 'Plezy',
+			'app.title' => 'FTV',
 			'auth.signInWithPlex' => '使用 Plex 登入',
 			'auth.showQRCode' => '顯示 QR 碼',
 			'auth.authenticate' => '驗證',

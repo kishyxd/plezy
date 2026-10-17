@@ -3039,7 +3039,7 @@ class _Translations$services$libraryFilter$az extends Translations$services$libr
 extension on TranslationsAz {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'app.title' => 'Plezy',
+			'app.title' => 'FTV',
 			'auth.signInWithPlex' => 'Plex ilə daxil ol',
 			'auth.showQRCode' => 'QR kodu göstər',
 			'auth.authenticate' => 'Təsdiqlə',

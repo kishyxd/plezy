@@ -104,7 +104,7 @@ class Translations$app$en {
 
 	// Translations
 
-	/// en: 'Plezy'
+	/// en: 'FTV'
 	String get title => 'FTV';
 }
 
@@ -7789,7 +7789,7 @@ class Translations$services$libraryFilter$en {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'app.title' => 'Plezy',
+			'app.title' => 'FTV',
 			'appIcon.title' => 'App icon',
 			'appIcon.defaultIcon' => 'Default',
 			'appIcon.current' => 'Current icon',
