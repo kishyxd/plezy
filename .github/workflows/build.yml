@@ -379,6 +379,10 @@ jobs:
         run: |
           mkdir -p dmg-staging
           cp -R build/macos/Build/Products/Release/FTV.app dmg-staging/
+          # Force OUR icon at every size: actool keeps emitting legacy plezy art into plezy.icns
+          cp macos/plezy.icon-forced.icns dmg-staging/FTV.app/Contents/Resources/plezy.icns
+          cp macos/plezy.icon-forced.icns dmg-staging/FTV.app/Contents/Resources/FTV.icns
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string FTV" dmg-staging/FTV.app/Contents/Info.plist 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :CFBundleIconFile FTV" dmg-staging/FTV.app/Contents/Info.plist
           ln -s /Applications dmg-staging/Applications
           hdiutil create -format ULMO -srcfolder dmg-staging -volname "FTV" ftv-macos.dmg
 
