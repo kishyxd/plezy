@@ -15,28 +15,29 @@ jobs:
       - name: Fetch signed IPA
         run: |
           curl -sL --retry 3 -o ftv.ipa "${{ inputs.ipa_url }}"
-          ls -la ftv.ipa
-          file ftv.ipa || true
-          unzip -l ftv.ipa | head -5
+          unzip -t ftv.ipa > /dev/null && echo "zip integrity OK"
+          unzip -l ftv.ipa | grep "Payload/"
 
-      - name: Validate Info.plist inside IPA
+      - name: Show bundle identity
         run: |
           mkdir -p probe && cd probe
-          unzip -qo ../ftv.ipa Payload/*/Info.plist
-          PLIST=$(find . -name Info.plist | head -1)
-          plutil -extract CFBundleIdentifier raw "$PLIST" || true
-          plutil -extract CFBundleShortVersionString raw "$PLIST" || true
-          plutil -extract CFBundleDisplayName raw "$PLIST" || true
+          unzip -qo ../ftv.ipa "Payload/*"
+          APP=$(find . -maxdepth 2 -name "*.app" -type d | head -1)
+          echo "APP=$APP" >> "$GITHUB_ENV"
+          plutil -extract CFBundleIdentifier raw "$APP/Info.plist"
+          plutil -extract CFBundleShortVersionString raw "$APP/Info.plist"
+          plutil -extract CFBundleVersion raw "$APP/Info.plist"
 
-      - name: Probe App Store Connect and upload
+      - name: Upload to App Store Connect
         run: |
-          xcrun altool --upload-package ftv.ipa \
-            --apple-id "${{ secrets.APPLE_ID }}" \
-            --password "${{ secrets.APPLE_APP_SPEC_PW }}" \
-            --team-id "6VS7BF6R33" \
-            --type ios 2>&1 | tee upload.log
-          if grep -q "ERROR\|error:" upload.log; then
-            echo "::warning::altool reported errors - see log"
+          set -o pipefail
+          xcrun altool --upload-app --file ftv.ipa \
+            --type ios \
+            -u "${{ secrets.APPLE_ID }}" \
+            -p "${{ secrets.APPLE_APP_SPEC_PW }}" \
+            --team-id "6VS7BF6R33" 2>&1 | tee upload.log
+          if grep -qiE "error|unable to" upload.log; then
+            echo "::error::altool upload failed - see log above"
             exit 1
           fi
           echo "UPLOAD-DONE"
