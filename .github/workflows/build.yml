@@ -372,9 +372,9 @@ jobs:
       - name: Create DMG
         run: |
           mkdir -p dmg-staging
-          cp -R build/macos/Build/Products/Release/Plezy.app dmg-staging/
+          cp -R build/macos/Build/Products/Release/FTV.app dmg-staging/
           ln -s /Applications dmg-staging/Applications
-          hdiutil create -format ULMO -srcfolder dmg-staging -volname "Plezy" plezy-macos.dmg
+          hdiutil create -format ULMO -srcfolder dmg-staging -volname "FTV" ftv-macos.dmg
 
       - name: Sign DMG for Sparkle (EdDSA)
         if: env.SPARKLE_PRIVATE_KEY != ''
@@ -382,17 +382,17 @@ jobs:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
           printf -- "-----BEGIN ED25519 PRIVATE KEY-----\n%s\n-----END ED25519 PRIVATE KEY-----\n" "$SPARKLE_PRIVATE_KEY" > ed25519_key.pem
-          OUTPUT=$(dart run auto_updater:sign_update plezy-macos.dmg ed25519_key.pem)
+          OUTPUT=$(dart run auto_updater:sign_update ftv-macos.dmg ed25519_key.pem)
           rm ed25519_key.pem
           # Extract edSignature value from output like: sparkle:edSignature="..." length="..."
           SIGNATURE=$(echo "$OUTPUT" | grep -o 'edSignature="[^"]*"' | sed 's/edSignature="//;s/"//')
           echo "MACOS_ED_SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
-          echo "MACOS_DMG_SIZE=$(stat -f%z plezy-macos.dmg)" >> $GITHUB_ENV
+          echo "MACOS_DMG_SIZE=$(stat -f%z ftv-macos.dmg)" >> $GITHUB_ENV
 
       - name: Attest macOS DMG
         uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4
         with:
-          subject-path: plezy-macos.dmg
+          subject-path: ftv-macos.dmg
 
       - name: Write macOS signature metadata
         run: |
@@ -404,7 +404,7 @@ jobs:
         with:
           name: macos-dmg
           path: |
-            plezy-macos.dmg
+            ftv-macos.dmg
             macos-ed-signature.txt
             macos-dmg-size.txt
 
@@ -1035,7 +1035,7 @@ jobs:
           # macOS enclosure
           if [ -n "$MACOS_ED_SIG" ]; then
             cat >> appcast.xml << XMLEOF
-                <enclosure url="https://github.com/edde746/plezy/releases/download/${VERSION}/plezy-macos.dmg"
+                <enclosure url="https://github.com/edde746/plezy/releases/download/${VERSION}/ftv-macos.dmg"
                            length="${MACOS_DMG_SIZE}" type="application/octet-stream"
                            sparkle:edSignature="${MACOS_ED_SIG}"
                            sparkle:os="macos" />
@@ -1079,7 +1079,7 @@ jobs:
               echo artifacts/ios-ipa/plezy-ios.ipa
             fi
             if [ "${{ inputs.build_macos }}" = "true" ]; then
-              echo artifacts/macos-dmg/plezy-macos.dmg
+              echo artifacts/macos-dmg/ftv-macos.dmg
             fi
             if [ "${{ inputs.build_windows }}" = "true" ]; then
               echo artifacts/windows-x64-portable/plezy-windows-x64-portable.7z
