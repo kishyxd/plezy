@@ -286,11 +286,11 @@ if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
 
 if ($HasX64) {
     Write-Host "`nCreating x64 portable archive..." -ForegroundColor Cyan
-    $X64Portable = Join-Path $ResolvedOutput "plezy-windows-x64-portable.7z"
+    $X64Portable = Join-Path $ResolvedOutput "plezy-windows-x64-portable.zip"
     Push-Location $X64BuildDir
     try {
         if (Test-Path $X64Portable) { Remove-Item $X64Portable -Force }
-        7z a -mx=9 $X64Portable *
+        7z a -tzip -mx=9 $X64Portable *
         Write-Host "Created: $X64Portable" -ForegroundColor Green
     } finally {
         Pop-Location
@@ -299,11 +299,11 @@ if ($HasX64) {
 
 if ($HasArm64) {
     Write-Host "`nCreating arm64 portable archive..." -ForegroundColor Cyan
-    $Arm64Portable = Join-Path $ResolvedOutput "plezy-windows-arm64-portable.7z"
+    $Arm64Portable = Join-Path $ResolvedOutput "plezy-windows-arm64-portable.zip"
     Push-Location $Arm64BuildDir
     try {
         if (Test-Path $Arm64Portable) { Remove-Item $Arm64Portable -Force }
-        7z a -mx=9 $Arm64Portable *
+        7z a -tzip -mx=9 $Arm64Portable *
         Write-Host "Created: $Arm64Portable" -ForegroundColor Green
     } finally {
         Pop-Location
