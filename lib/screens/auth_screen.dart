@@ -33,6 +33,7 @@ import '../widgets/dialog_action_button.dart';
 import 'auth/plex_pin_auth_flow.dart';
 import 'profile/profile_switch_screen.dart';
 import 'settings/add_jellyfin_screen.dart';
+import '../config/ftv_mode.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({
@@ -234,12 +235,12 @@ class _AuthScreenState extends State<AuthScreen> {
     _showDebugTokenDialog();
   }
 
-  Future<void> _connectToMediaBrowser(MediaBrowserDialect dialect) async {
+  Future<void> _connectToMediaBrowser(MediaBrowserDialect dialect, {String? presetUrl}) async {
     if (!await _prepareDatabaseRecoveryForSignIn()) return;
     if (!mounted) return;
     final added = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) => AddJellyfinScreen(dialect: dialect)),
+      MaterialPageRoute(builder: (_) => AddJellyfinScreen(dialect: dialect, presetUrl: presetUrl)),
     );
     if (!mounted || added != true) return;
     // The connection persisted and the manager registered the client; move
@@ -360,8 +361,27 @@ class _AuthScreenState extends State<AuthScreen> {
     void startQrAfterRecovery() => unawaited(_startPlexAfterRecovery(startQr));
     const jellyfinDialect = MediaBrowserDialect.jellyfin;
     const embyDialect = MediaBrowserDialect.emby;
-    void connectToJellyfin() => unawaited(_connectToMediaBrowser(jellyfinDialect));
+    void connectToJellyfin() => unawaited(_connectToMediaBrowser(jellyfinDialect, presetUrl: ftvServerUrl));
     void connectToEmby() => unawaited(_connectToMediaBrowser(embyDialect));
+    if (ftvModeEnabled) {
+      return Column(
+        mainAxisSize: .min,
+        crossAxisAlignment: .stretch,
+        children: [
+          FocusableButton(
+            autofocus: true,
+            onPressed: busy ? null : connectToJellyfin,
+            useBackgroundFocus: true,
+            child: ElevatedButton.icon(
+              onPressed: busy ? null : connectToJellyfin,
+              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+              icon: const Icon(Icons.phone_iphone_rounded),
+              label: const Text('Sign in to FTV'),
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       mainAxisSize: .min,
       crossAxisAlignment: .stretch,

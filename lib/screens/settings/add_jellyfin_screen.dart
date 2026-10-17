@@ -89,12 +89,17 @@ class AddJellyfinScreen extends StatefulWidget {
   /// profile (typical for the global Connections screen entry point).
   final Profile? targetProfile;
   final MediaBrowserDialect dialect;
+
+  /// When set (FTV locked builds), the URL field is prefilled and locked to
+  /// this server and local discovery is hidden.
+  final String? presetUrl;
   final FutureOr<JellyfinConnectionAuthService> Function()? _authServiceFactory;
   final FutureOr<List<DiscoveredJellyfinServer>> Function()? _localDiscoveryFactory;
 
   const AddJellyfinScreen({
     super.key,
     this.targetProfile,
+    this.presetUrl,
     this.dialect = MediaBrowserDialect.jellyfin,
     @visibleForTesting this._authServiceFactory,
     @visibleForTesting this._localDiscoveryFactory,
@@ -133,7 +138,11 @@ class _AddJellyfinScreenState extends State<AddJellyfinScreen>
   @override
   void initState() {
     super.initState();
-    unawaited(_discoverLocalServers());
+    if (widget.presetUrl != null) {
+      _urlController.text = widget.presetUrl!;
+    } else {
+      unawaited(_discoverLocalServers());
+    }
   }
 
   @override
@@ -508,7 +517,7 @@ class _AddJellyfinScreenState extends State<AddJellyfinScreen>
         maxLines: 4,
         autocorrect: false,
         enableSuggestions: false,
-        enabled: !busy,
+        enabled: !busy && widget.presetUrl == null,
         onChanged: (_) {
           if (_serverInfo == null && _serverEndpoint == null && !_quickConnectEnabled) return;
           setState(() {
@@ -529,7 +538,7 @@ class _AddJellyfinScreenState extends State<AddJellyfinScreen>
         ),
         validator: (_) => _enteredUrls().isEmpty ? t.addServer.required : null,
       ),
-      if (_serverInfo == null) ...[
+      if (_serverInfo == null && widget.presetUrl == null) ...[
         ..._buildLocalDiscoverySection(theme),
         const SizedBox(height: 16),
         FocusableButton(
