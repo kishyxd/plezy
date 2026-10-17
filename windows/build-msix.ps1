@@ -46,7 +46,7 @@ function New-AppxManifest {
     # '[-.A-Za-z0-9]+' by the schema, so it can never carry an underscore.
     $IdentityName = "edde746.Plezy"
     $Publisher = "CN=AA9C53CB-AD3C-48DA-B3E3-D1E8986D4E25"
-    $PublisherDisplayName = "edde746"
+    $PublisherDisplayName = "KXVN"
 
     # One template for both architectures, which can therefore not drift apart;
     # ProcessorArchitecture is the only difference between them.
@@ -74,7 +74,7 @@ function New-AppxManifest {
             ProcessorArchitecture="$Architecture" />
 
   <Properties>
-    <DisplayName>Plezy</DisplayName>
+    <DisplayName>FTV</DisplayName>
     <PublisherDisplayName>$PublisherDisplayName</PublisherDisplayName>
     <Logo>assets\StoreLogo.png</Logo>
   </Properties>
