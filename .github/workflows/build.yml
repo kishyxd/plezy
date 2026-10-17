@@ -383,6 +383,10 @@ jobs:
           cp macos/plezy.icon-forced.icns dmg-staging/FTV.app/Contents/Resources/plezy.icns
           cp macos/plezy.icon-forced.icns dmg-staging/FTV.app/Contents/Resources/FTV.icns
           /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string FTV" dmg-staging/FTV.app/Contents/Info.plist 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :CFBundleIconFile FTV" dmg-staging/FTV.app/Contents/Info.plist
+          cat > dmg-staging/.icns-done 2>/dev/null || true
+          # Re-seal ad-hoc OVER the modified resources (macOS 26 greets unsigned/quarantined apps as "damaged")
+          /usr/bin/codesign --force --deep --sign - dmg-staging/FTV.app
+          /usr/bin/codesign --verify --deep dmg-staging/FTV.app && echo "ad-hoc seal valid"
           ln -s /Applications dmg-staging/Applications
           hdiutil create -format ULMO -srcfolder dmg-staging -volname "FTV" ftv-macos.dmg
 
