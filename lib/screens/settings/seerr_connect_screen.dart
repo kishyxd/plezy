@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,8 @@ import '../../theme/mono_tokens.dart';
 import '../../widgets/app_icon.dart';
 import '../../widgets/focused_scroll_scaffold.dart';
 import '../../widgets/loading_indicator_box.dart';
+
+import '../../config/ftv_mode.dart';
 import '../../widgets/quick_connect_code_panel.dart';
 import 'async_form_state_mixin.dart';
 import 'quick_connect_flow_mixin.dart';
@@ -43,6 +47,19 @@ class SeerrConnectScreen extends StatefulWidget {
 class _SeerrConnectScreenState extends State<SeerrConnectScreen>
     with AsyncFormStateMixin, QuickConnectFlowMixin, ControllerDisposerMixin {
   late final _urlController = createTextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Locked edition: the Seerr instance is preset, so fill it in and probe
+    // immediately — the user lands directly on the sign-in step.
+    if (ftvSeerrEnabled) {
+      _urlController.text = ftvSeerrUrl;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !busy) unawaited(_probe());
+      });
+    }
+  }
   late final _identifierController = createTextEditingController();
   late final _passwordController = createTextEditingController();
   final _urlFocus = FocusNode(debugLabel: 'SeerrConnect:Url');
@@ -266,7 +283,7 @@ class _SeerrConnectScreenState extends State<SeerrConnectScreen>
         keyboardType: TextInputType.url,
         autocorrect: false,
         enableSuggestions: false,
-        enabled: !busy,
+        enabled: !busy && !ftvSeerrEnabled,
         onNavigateDown: () => _continueFocus.requestFocus(),
         textInputAction: TextInputAction.go,
         onFieldSubmitted: busy ? null : (_) => _probe(),

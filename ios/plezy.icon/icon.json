@@ -27,11 +27,11 @@
           "image-name": "ftv-fish.png",
           "name": "ftv-fish",
           "position": {
-            "scale": 2,
-            "translation-in-points": [
-              0,
-              0
-            ]
+              "scale": 1,
+              "translation-in-points": [
+                  0,
+                  0
+              ]
           }
         }
       ],

@@ -33,7 +33,7 @@ env:
   # Only place this workflow names the SDK; .github/actions/setup-flutter-git pins the same release.
   FLUTTER_VERSION: "3.47.1"
   # Shared by every release build command; SENTRY_DIST stays per-platform.
-  RELEASE_DART_DEFINES: --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=FTV_SERVER=https://ftv.kxvn.io ${{ github.repository == 'edde746/plezy' && '--dart-define=ENABLE_SENTRY=true' || '' }} --dart-define=GIT_COMMIT=${{ github.sha }} --dart-define=SENTRY_ENVIRONMENT=github --dart-define=ENABLE_DONATIONS=false
+  RELEASE_DART_DEFINES: --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=FTV_SERVER=https://ftv.kxvn.io --dart-define=FTV_SEERR_URL=https://request.kxvn.io ${{ github.repository == 'edde746/plezy' && '--dart-define=ENABLE_SENTRY=true' || '' }} --dart-define=GIT_COMMIT=${{ github.sha }} --dart-define=SENTRY_ENVIRONMENT=github --dart-define=ENABLE_DONATIONS=false
   TRUSTED_BUILD_CACHE_VERSION: trusted-build-v1
   LINUX_APT_PACKAGES: >
     clang cmake meson ninja-build pkg-config nasm libgtk-3-dev libevdev-dev liblzma-dev
