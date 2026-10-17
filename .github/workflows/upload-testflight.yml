@@ -36,7 +36,7 @@ jobs:
             -u "${{ secrets.APPLE_ID }}" \
             -p "${{ secrets.APPLE_APP_SPEC_PW }}" \
             --team-id "6VS7BF6R33" 2>&1 | tee upload.log
-          if grep -qiE "error|unable to" upload.log; then
+          if ! grep -q "No errors uploading" upload.log; then
             echo "::error::altool upload failed - see log above"
             exit 1
           fi
