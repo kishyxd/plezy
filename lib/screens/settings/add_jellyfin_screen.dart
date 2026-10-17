@@ -140,6 +140,14 @@ class _AddJellyfinScreenState extends State<AddJellyfinScreen>
     super.initState();
     if (widget.presetUrl != null) {
       _urlController.text = widget.presetUrl!;
+      // Locked edition: the server URL is preset but _serverInfo is still
+      // null, and the server card renders only after a probe resolves it.
+      // Resolve immediately instead of waiting for the user's first tap —
+      // otherwise the form renders before the card is valid (crash) and
+      // sign-in needs two taps.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_probe());
+      });
     } else {
       unawaited(_discoverLocalServers());
     }
@@ -553,9 +561,11 @@ class _AddJellyfinScreenState extends State<AddJellyfinScreen>
           ),
         ),
       ] else ...[
-        const SizedBox(height: 16),
-        _buildServerCard(theme),
-        const SizedBox(height: 16),
+        if (_serverInfo != null) ...[
+          const SizedBox(height: 16),
+          _buildServerCard(theme),
+          const SizedBox(height: 16),
+        ],
         FocusableTextFormField(
           controller: _usernameController,
           focusNode: _usernameFocus,
