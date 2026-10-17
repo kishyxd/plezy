@@ -42,7 +42,7 @@ Source: "staging\arm64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 #define Name "FTV"
 #define Version "$Version"
 #define Publisher "KXVN"
-#define ExeName "plezy.exe"
+#define ExeName "ftv.exe"
 
 [Setup]
 AppId={{$AppGuid}

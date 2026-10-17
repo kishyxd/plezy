@@ -96,9 +96,9 @@ function New-AppxManifest {
   </Capabilities>
 
   <Applications>
-    <Application Id="Plezy" Executable="plezy.exe" EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements DisplayName="Plezy"
-                          Description="A modern client for Plex and Jellyfin"
+    <Application Id="FTV" Executable="ftv.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="FTV"
+                          Description="FTV — client for your private media server"
                           BackgroundColor="transparent"
                           Square150x150Logo="assets\Square150x150Logo.png"
                           Square44x44Logo="assets\Square44x44Logo.png">
