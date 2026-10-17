@@ -509,7 +509,7 @@ jobs:
           $foundFiles | ForEach-Object { Write-Host "  $_" }
 
           $requiredFiles = @(
-            "plezy.exe"
+            "ftv.exe"
             "flutter_windows.dll"
             "sqlite3.dll"
             "libmpv-2.dll"
