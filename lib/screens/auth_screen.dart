@@ -379,6 +379,17 @@ class _AuthScreenState extends State<AuthScreen> {
               label: const Text('Sign in to FTV'),
             ),
           ),
+          const SizedBox(height: 12),
+          FocusableButton(
+            useBackgroundFocus: true,
+            onPressed: busy ? null : () => unawaited(_connectToMediaBrowser(jellyfinDialect)),
+            child: ElevatedButton.icon(
+              onPressed: busy ? null : () => unawaited(_connectToMediaBrowser(jellyfinDialect)),
+              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+              icon: const Icon(Icons.dns_rounded),
+              label: const Text('Use Your Own Server'),
+            ),
+          ),
         ],
       );
     }
