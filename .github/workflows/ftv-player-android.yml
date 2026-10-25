@@ -12,6 +12,11 @@ name: FTV-Player-Android
 # The FTV edition is locked to the KXVN server at build time (`-PftvServer`).
 
 on:
+  # **A push on a dedicated branch, not `workflow_dispatch`.** GitHub refuses a dispatch on this
+  # fork ("Actions has been disabled for this repository"), and a push always works. Pushing the
+  # branch `build/ftv-player` starts the build; the inputs are the defaults below.
+  push:
+    branches: [build/ftv-player]
   workflow_dispatch:
     inputs:
       ref:
