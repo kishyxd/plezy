@@ -1,0 +1,63 @@
+name: Probe-Apple-Auth
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: macos-14
+    steps:
+      - name: Probe the Apple auth paths
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPEC_PW: ${{ secrets.APPLE_APP_SPEC_PW }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set +x
+          mkdir -p /tmp/probe
+          cd /tmp/probe
+          echo "### the apple id domain:"
+          echo "$APPLE_ID" | sed 's/.*@/@/' 
+          echo "### the password length: ${#APPLE_APP_SPEC_PW}"
+
+          echo "### 1. altool --list-devices (does the app-specific password work?)"
+          xcrun altool --list-devices --apple-id "$APPLE_ID" --password "$APPLE_APP_SPEC_PW" --team-id "$APPLE_TEAM_ID" 2>&1 | head -20 | tee a1.txt
+
+          echo "### 2. the legacy WebObjects API: the devices"
+          curl -s -o b1.json -w 'HTTP %{http_code}\n' -u "$APPLE_ID:$APPLE_APP_SPEC_PW" \
+            -H 'Content-Type: application/json' -X POST \
+            'https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/devices' \
+            --data '{"limit":100}' 2>&1 | tail -2
+          head -c 1500 b1.json; echo
+
+          echo "### 3. the legacy API: the certificates"
+          curl -s -o c1.json -w 'HTTP %{http_code}\n' -u "$APPLE_ID:$APPLE_APP_SPEC_PW" \
+            -H 'Content-Type: application/json' -X POST \
+            'https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/certificates' 2>&1 | tail -2
+          head -c 1500 c1.json; echo
+
+          echo "### 4. the legacy API: the profiles"
+          curl -s -o d1.json -w 'HTTP %{http_code}\n' -u "$APPLE_ID:$APPLE_APP_SPEC_PW" \
+            -H 'Content-Type: application/json' -X POST \
+            'https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/profiles' \
+            --data '{"limit":20}' 2>&1 | tail -2
+          head -c 2000 d1.json; echo
+
+          echo "### 5. the developer portal's own API (a session is needed?)"
+          curl -s -o e1.json -w 'HTTP %{http_code}\n' -u "$APPLE_ID:$APPLE_APP_SPEC_PW" \
+            -H 'Content-Type: application/json' -X POST \
+            'https://developer.apple.com/services-account/QH65B2/downloadws/listDevices.action' 2>&1 | tail -2
+          head -c 800 e1.json; echo
+
+          echo "### 6. altool --list-apps"
+          xcrun altool --list-apps --apple-id "$APPLE_ID" --password "$APPLE_APP_SPEC_PW" --team-id "$APPLE_TEAM_ID" 2>&1 | head -20 | tee f1.txt
+
+      - name: Upload the probe results
+        uses: actions/upload-artifact@v4
+        with:
+          name: apple-probe
+          path: /tmp/probe
+          retention-days: 3
