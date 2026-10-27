@@ -207,7 +207,7 @@ begin
 
     { A machine-wide install that took over a directory registered per-user
       leaves that user's uninstall entry and Start Menu group pointing at files
-      this install now owns, listing Plezy twice in Apps & Features. }
+      this install now owns, listing FTV twice in Apps & Features. }
     if IsAdminInstallMode then
     begin
       if RegQueryStringValue(HKCU, UninstallSubkey, 'Inno Setup: App Path', PreviousDir) and

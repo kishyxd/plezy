@@ -18,7 +18,7 @@ METADATA = {
     "vendor": "edde746",
     "maintainer": "edde746 <noreply@github.com>",
     "url": "https://github.com/edde746/plezy",
-    "description": "A modern Plex and Jellyfin client for desktop and mobile",
+    "description": "The private KXVN media app",
 }
 
 ICON_SIZES = [16, 32, 48, 64, 128, 256, 512]
